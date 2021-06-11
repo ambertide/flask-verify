@@ -30,7 +30,7 @@ def verify_json_response(route: JSONRoute) -> Callable[..., Response]:
     from the tuple that is the return type of the original
     view function.
     """
-    @wraps
+    @wraps(route)
     def route_returns_json(*args, **kwargs) -> Response:
         response = route(*args, **kwargs)  # Get the response first.
         if isinstance(response, Response):
@@ -43,6 +43,6 @@ def verify_json_response(route: JSONRoute) -> Callable[..., Response]:
             response = Response(dumps(body), status=status_code,
                                 content_type="application/json")
             return response
-        except (ValueError, AssertionError, TypeError):
-            raise TypeError("Invalid view function return type.")
+        except (ValueError, AssertionError, TypeError) as exception:
+            raise TypeError("Invalid view function return type.") from exception
     return route_returns_json

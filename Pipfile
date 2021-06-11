@@ -8,6 +8,8 @@ pytest = "*"
 pytest-flask = "*"
 flake8 = "*"
 mypy = "*"
+pylint = "*"
+autopep8 = "*"
 
 [packages]
 flask = "*"
