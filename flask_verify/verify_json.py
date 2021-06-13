@@ -66,7 +66,8 @@ def verify_json_request(must_contain: Optional[Iterable] = None) -> Callable:
         """
         @wraps(route)
         def wrapper(*args, **kwargs) -> Any:
-            if (json := request.json) is None:  # If Request is not of application/json type.
+            json = request.json
+            if json is None:  # If Request is not of application/json type.
                 return Response(dumps({"message": "Invalid request type, not JSON."}),
                                      status=400, content_type="application/json")
             if any((k:=key) not in json for key in must_contain):
