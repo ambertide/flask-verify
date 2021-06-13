@@ -1,14 +1,15 @@
-#! /usr/bin/sh
-# This great pylint workaround courtesy of https://stackoverflow.com/a/63044665/6663851
-complexity_check="pipenv run xenon --max-modules A --max-average A --max-absolute B flask_verify/"
-hinting="pipenv run mypy --namespace-packages app.py flask_verify/"
-unittests="pipenv run coverage run --source=flask_verify/ -m pytest"
-$unittests
-status=$?
-if [ $status -gt 0 ]
-then
-    echo Error occured during Unit Tests.
-    exit 1
-fi
+#!/bin/bash
+checks[0]="pipenv run xenon --max-modules A --max-average A --max-absolute B flask_verify/"
+checks[1]="pipenv run mypy flask_verify"
+checks[2]="pipenv run coverage run --source=flask_verify/ -m pytest"
+for ((i = 0; i < 3; i++)); do
+    ${checks[$i]}
+    status=$?
+    if [ $status -gt 0 ]
+    then
+        echo Error occured the latest check.
+        exit 1
+    fi
+done
 coverage report
 exit

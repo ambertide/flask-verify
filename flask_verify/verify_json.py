@@ -58,19 +58,16 @@ def verify_json_request(must_contain: Optional[Iterable] = None) -> Callable:
     :return A view route that checks JSON requirements before executing
         requests.
     """
-    if must_contain is None:
-        must_contain = []
     def verify_json_request_wrapper(route: Callable) -> Callable:
         """
         Wrapper function around the decorator.
         """
         @wraps(route)
         def wrapper(*args, **kwargs) -> Any:
-            json = request.json
-            if json is None:  # If Request is not of application/json type.
+            if (json := request.json) is None:  # If Request is not of application/json type.
                 return Response(dumps({"message": "Invalid request type, not JSON."}),
                                      status=400, content_type="application/json")
-            if any((k:=key) not in json for key in must_contain):
+            if must_contain and any((k:=key) not in json for key in must_contain):
                 # If one of the keys is not in the JSON request body.
                 return Response(dumps({"message": f"Request does not contain key {k}"}),
                                   status=400, content_type="application/json")
