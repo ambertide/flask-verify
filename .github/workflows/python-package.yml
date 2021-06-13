@@ -32,4 +32,4 @@ jobs:
         pipenv run mypy flask_verify
     - name: Test with pytest
       run: |
-        pipenv run -m pytest
+        pipenv run python -m pytest
