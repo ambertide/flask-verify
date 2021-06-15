@@ -1,6 +1,6 @@
 from flask import Flask, request
 from flask.testing import FlaskClient
-from flask_verify.verify_json import verify_json_request
+from flask_verify.verify_json import verify_json_request, verify_json_route
 import pytest
 
 
@@ -19,6 +19,12 @@ def create_app() -> Flask:
     @verify_json_request()
     def just_json() -> tuple[str, int]:
         return "Ok.", 200
+
+    @app.route("/requires_and_responds_json", methods=["POST"])
+    @verify_json_route(must_contain=('message',))
+    def full_json() -> tuple[str, int]:
+        return {'echo': request.json['message']}, 200
+
     return app
 
 
@@ -28,5 +34,5 @@ def client() -> FlaskClient:
     Fixture used to run API tests.
     """
     app = create_app()
-    with app.test_client() as client:
-        yield client
+    with app.test_client() as client_:
+        yield client_

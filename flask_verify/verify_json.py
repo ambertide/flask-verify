@@ -54,7 +54,7 @@ def verify_json_request(must_contain: Optional[Iterable] = None) -> Callable:
         of MIME type Application/JSON.
 
     :param must_contain: If provided, JSON collection is checked
-        if it contains items provided.
+        if it contains items provided, if not, it will return 400.
     :return A view route that checks JSON requirements before executing
         requests.
     """
@@ -74,3 +74,20 @@ def verify_json_request(must_contain: Optional[Iterable] = None) -> Callable:
             return route(*args, **kwargs)  # Otherwise everything is fine.
         return wrapper
     return verify_json_request_wrapper
+
+
+def verify_json_route(must_contain: Optional[Iterable] = None) -> Callable:
+    """
+    Wrapper around JSON response and request verification decorators,
+        a decorated that is decorated with this decorator will be verified
+        if it has a JSON request and its response will be converted into a JSON response.
+
+    :param must_contain: If specified, JSON request will be checked to contain this
+        keys. If it does not, route will return a 400 error.
+    """
+    def route_wrapper(route: JSONRoute) -> Callable:
+        @wraps(route)
+        def wrapper(*args, **kwargs) -> Response:
+            return verify_json_request(must_contain)(verify_json_response(route))(*args, **kwargs)
+        return wrapper
+    return route_wrapper
