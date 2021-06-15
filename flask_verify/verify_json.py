@@ -7,6 +7,7 @@ from functools import wraps
 from typing import Any, Callable, Iterable, Union, Optional
 from flask import Response, request
 from json import dumps
+from dataclasses import is_dataclass, asdict
 
 
 JSONSerializable = Union[dict[str, Any], list[Any]]
@@ -20,15 +21,17 @@ def verify_json_response(route: JSONRoute) -> Callable[..., Response]:
         effectively by converting Flask routes to return
         Responses with JSON.
 
-    :param route: A route view function that either returns
-    a Response itself or a tuple[JSONSerializable, int] where
-    its first value is the response body and second value is
-    the status code.
-    :return Is a route function that either returns the same
-    Response as the original route function if it returned a
-    Response or a Response whose status code and body is taken
-    from the tuple that is the return type of the original
-    view function.
+    :parameter route: A route view function that either returns
+        a Response itself or a tuple[JSONSerializable, int] where
+        its first value is the response body and second value is
+        the status code. The response body may also be dataclass
+        object.
+
+    :return: Is a route function that either returns the same
+        Response as the original route function if it returned a
+        Response or a Response whose status code and body is taken
+        from the tuple that is the return type of the original
+        view function.
     """
     @wraps(route)
     def wrapper(*args, **kwargs) -> Response:
@@ -40,6 +43,8 @@ def verify_json_response(route: JSONRoute) -> Callable[..., Response]:
         try:
             body, status_code = response
             assert isinstance(status_code, int)
+            if is_dataclass(body):  # Dataclasses can also be converted.
+                body = asdict(body)
             response = Response(dumps(body), status=status_code,
                                 content_type="application/json")
             return response
@@ -55,7 +60,8 @@ def verify_json_request(must_contain: Optional[Iterable] = None) -> Callable:
 
     :param must_contain: If provided, JSON collection is checked
         if it contains items provided, if not, it will return 400.
-    :return A view route that checks JSON requirements before executing
+    
+    :return: A view route that checks JSON requirements before executing
         requests.
     """
     def verify_json_request_wrapper(route: Callable) -> Callable:

@@ -12,6 +12,9 @@ pylint = "*"
 autopep8 = "*"
 xenon = "*"
 coverage = "*"
+sphinx = "*"
+sphinx-rtd-theme = "*"
+sphinx-book-theme = "*"
 
 [packages]
 flask = "*"
