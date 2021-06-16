@@ -35,6 +35,8 @@ jobs:
         wget -O testrunner https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
         chmod +x testrunner
     - name: Test with pytest
+      env:
+        CC_TEST_REPORTER_ID: ${{ CC_TEST_REPORTER_ID }}
       run: |
         ./testrunner before-build
         pipenv run coverage run --source=flask_verify/ -m pytest
