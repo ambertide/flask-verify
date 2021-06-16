@@ -7,6 +7,7 @@ from functools import wraps
 from typing import Any, Callable, Iterable, Union, Optional
 from flask import Response, request
 from json import dumps
+from warnings import warn
 from dataclasses import is_dataclass, asdict
 
 
@@ -45,6 +46,9 @@ def verify_json_response(route: JSONRoute) -> Callable[..., Response]:
             assert isinstance(status_code, int)
             if is_dataclass(body):  # Dataclasses can also be converted.
                 body = asdict(body)
+            elif isinstance(body, list):  # Top-level arrays may cause an old security vulnerability.
+                warn("Using top level arrays in JSON is possibly a security vulnerability.",
+                     RuntimeWarning)
             response = Response(dumps(body), status=status_code,
                                 content_type="application/json")
             return response
