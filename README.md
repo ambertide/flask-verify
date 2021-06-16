@@ -1,4 +1,4 @@
-# flask-verify
+# flask_verify
 
 [![Python package](https://github.com/ambertide/flask-verify/actions/workflows/python-package.yml/badge.svg)](https://github.com/ambertide/flask-verify/actions/workflows/python-package.yml)
 [![Maintainability](https://api.codeclimate.com/v1/badges/d052e70921b90955244f/maintainability)](https://codeclimate.com/github/ambertide/flask-verify/maintainability)
@@ -11,10 +11,10 @@ A python package to verify the content of Requests and convert the return values
 
 ## Installation
 
-You can install `flask-verify`
+You can install `flask_verify`
 
 ```bash
-pip install flask-verify
+pip install flask_verify
 ```
 
 

@@ -31,7 +31,7 @@ jobs:
         pipenv install
     - name: Publish package
       env:
-        FLIT_USERNAME: "@token"
+        FLIT_USERNAME: "__token__"
         FLIT_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
       run: |
         pipenv run flit publish
