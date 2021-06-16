@@ -1,0 +1,13 @@
+[build-system]
+requires = ["flit_core >=2,<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.flit.metadata]
+module = "flask_verify"
+author = "Ege Ozkan"
+author-email = "egeemirozkan24@gmail.com"
+home-page = "https://github.com/ambertide/flask-verify"
+classifiers = [ "License :: OSI Approved :: MIT License",]
+description-file = "README.md"
+requires-python = ">=3.9"
+requires = ["flask"]

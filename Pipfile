@@ -15,6 +15,7 @@ coverage = "*"
 sphinx = "*"
 sphinx-rtd-theme = "*"
 sphinx-book-theme = "*"
+flit = "*"
 
 [packages]
 flask = "*"

@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "d6dde33cf2e48fdd8b405d57baa15f547eb7b6aefb8ceb91fde7087c77e44e8f"
+            "sha256": "6ea0d335ac9574f8b319fc55fd3d7d0a1553e92acb1fb23abea70aeff83a810b"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -253,6 +253,21 @@
             ],
             "index": "pypi",
             "version": "==2.0.1"
+        },
+        "flit": {
+            "hashes": [
+                "sha256:592464c9268bbacec9bc67b5a3ae62e6e090aeec1563e69501df338a1728e551",
+                "sha256:721ac36ed1317d22e8b35da80b4fb4a50e09765787ff9649d01a4b05cc9f8a38"
+            ],
+            "index": "pypi",
+            "version": "==3.2.0"
+        },
+        "flit-core": {
+            "hashes": [
+                "sha256:6f25843e908dfc3e907b6b9ee71e3d185bcb5aebab8c3431e4e34c261e5ff1b5",
+                "sha256:ff87f25c5dbc24ef30ea334074e35030e4885e4c5de3bf4e21f15746f6d99431"
+            ],
+            "version": "==3.2.0"
         },
         "future": {
             "hashes": [
