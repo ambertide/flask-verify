@@ -18,9 +18,11 @@ JSONRoute = Union[Callable[..., tuple[JSONSerializable, int]],
 
 def verify_json_response(route: JSONRoute) -> Callable[..., Response]:
     """
-    Verify that a Flask route returns a JSON Response,
-        effectively by converting Flask routes to return
-        Responses with JSON.
+    Verify that a Flask route returns a JSON Response.
+
+    Effectively confirm the type of the Response by converting
+    the return value of the route function to a JSON Response
+    if it is not.
 
     :parameter route: A route view function that either returns
         a Response itself or a tuple[JSONSerializable, int] where
@@ -28,11 +30,19 @@ def verify_json_response(route: JSONRoute) -> Callable[..., Response]:
         the status code. The response body may also be dataclass
         object.
 
-    :return: Is a route function that either returns the same
+    :return: A route function that either returns the same
         Response as the original route function if it returned a
         Response or a Response whose status code and body is taken
         from the tuple that is the return type of the original
         view function.
+    
+    .. warning:: There is an old security vulnerability that affects
+        JSON responses with top-level arrays, my understanding is
+        that this mostly patched as functions such as ``jsonify``
+        that once blocked the user from converting top-level
+        arrays no longer do so. Despite this, to err in the
+        side of caution, this decorator will issue a waring
+        if the user attempts to return a top-level array.
     """
     @wraps(route)
     def wrapper(*args, **kwargs) -> Response:
@@ -46,7 +56,7 @@ def verify_json_response(route: JSONRoute) -> Callable[..., Response]:
             assert isinstance(status_code, int)
             if is_dataclass(body):  # Dataclasses can also be converted.
                 body = asdict(body)
-            elif isinstance(body, list):  # Top-level arrays may cause an old security vulnerability.
+            elif isinstance(body, list):  # Top-level arrays may cause an old vulnerability.
                 warn("Using top level arrays in JSON is possibly a security vulnerability.",
                      RuntimeWarning)
             response = Response(dumps(body), status=status_code,
@@ -59,8 +69,11 @@ def verify_json_response(route: JSONRoute) -> Callable[..., Response]:
 
 def verify_json_request(must_contain: Optional[Iterable] = None) -> Callable:
     """
+    Verify that the Request's type is JSON and contains necessary keys.
+
     Verify that a request sent to a Flask route has a request
-        of MIME type Application/JSON.
+    of MIME type ``application/json`` and if defined check
+    if it contains the necessary keys.
 
     :param must_contain: If provided, JSON collection is checked
         if it contains items provided, if not, it will return 400.
@@ -88,12 +101,17 @@ def verify_json_request(must_contain: Optional[Iterable] = None) -> Callable:
 
 def verify_json_route(must_contain: Optional[Iterable] = None) -> Callable:
     """
+    Wrapper around :func:`verify_json_request` and :func:`verify_json_response`.
+
     Wrapper around JSON response and request verification decorators,
-        a decorated that is decorated with this decorator will be verified
-        if it has a JSON request and its response will be converted into a JSON response.
+    a decorated that is decorated with this decorator will be verified
+    if it has a JSON request and its response will be converted into a
+    JSON response.
 
     :param must_contain: If specified, JSON request will be checked to contain this
         keys. If it does not, route will return a 400 error.
+
+    .. seealso:: :func:`verify_json_request` and :func:`verify_json_response`.
     """
     def route_wrapper(route: JSONRoute) -> Callable:
         @wraps(route)
